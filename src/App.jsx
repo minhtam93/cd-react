@@ -8,7 +8,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/index";
 import Contact from "./pages/contact";
 import Course from "./pages/course/index";
-import CourseDetail from "./pages/course/[slug]";
+import CourseDetail from "./pages/course/[slug][id]";
 import Page404 from "./pages/404";
 import {
   CONTACT_PATH,
