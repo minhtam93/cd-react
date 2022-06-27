@@ -33,10 +33,14 @@ import ProfilePayment from "./pages/profile/payment";
 import ProfileCourse from "./pages/profile/course";
 import Team from "./pages/team";
 import Project from "./pages/project";
+import {AuthProvider} from './hooks/useAuth'
+
+
+// console.log(AuthContext)
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Routes>
         <Route element={<MainLayout/>}>
           <Route path={HOME_PATH} element={<Home />}></Route>
@@ -58,7 +62,7 @@ function App() {
           <Route path="*" element={<Page404 />}></Route>
         </Route>
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 

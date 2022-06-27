@@ -1,7 +1,7 @@
 import React from "react";
 import className from "classnames";
 import { generatePath, Link } from "react-router-dom";
-import { COURSE_DETAIL_PATH } from '../constants/path'
+import { COURSE_DETAIL_PATH, REGISTER_PATH } from '../constants/path'
 
 const STATUS = {
     "dang-dien-ra": "Đang diễn ra",
@@ -13,7 +13,7 @@ export default function CourseCard({
   title,
   course_status,
   short_description,
-  order,
+  author,
   thumbnailUrl,
   slug,
   id,
@@ -36,7 +36,7 @@ const path = generatePath(COURSE_DETAIL_PATH,{ slug,id })
             <div className="top">
               <div className="user">
                 <img src="/img/icon-user-white.svg" alt="" />
-                {order}
+                {author}
               </div>
               <div className="heart">
                 <img src="/img/icon-heart.svg" alt="" /> 100
@@ -60,7 +60,7 @@ const path = generatePath(COURSE_DETAIL_PATH,{ slug,id })
             </div>
             <div className="name">{teacher.title}</div>
           </div>
-          <div className="register-btn">Đăng Ký</div>
+          <Link to={generatePath(REGISTER_PATH,{ id })} className="register-btn">Đăng Ký</Link>
         </div>
       </div>
     </div>

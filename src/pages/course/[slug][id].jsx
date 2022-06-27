@@ -6,12 +6,21 @@ import api from "../../constants/api";
 import { useCourse } from "../../hooks/useCourse";
 import { useQuery } from "../../hooks/useQuery";
 import courseService from "../../services/course";
+import { Skeleton } from "@mui/material";
+import { generatePath, Link } from "react-router-dom";
+import { REGISTER_PATH } from "../../constants/path";
+import styled from "styled-components";
+import PageLoading from "../../components/PageLoading";
+import Accordion from "../../components/Accordion";
 
 export default function CourseDetail() {
   const { id } = useParams();
-  // const [course, setCourse] = useState({});
-  const courses = useCourse();
-  const course = useQuery(() => courseService.getDetail(id), [id]);
+  const { courses } = useCourse();
+  const { data: course, isLoading } = useQuery(
+    () => courseService.getDetail(id),
+    [id]
+  );
+
   useEffect(() => {
     window.scroll({
       top: 0,
@@ -19,43 +28,45 @@ export default function CourseDetail() {
     });
   }, [id]);
 
-  function getRandomCourse(max) {
-    return Math.floor(Math.random() * max);
-  }
+  // const [randomCourses, setCourse] = useState([]);
+  // useEffect(() => {
+  //   let i = 0;
+  //   const newArr = [];
+  //   while (i < 3) {
+  //     newArr[i] = courses[Math.floor(Math.random() * courses.length)];
+  //     i++;
+  //   }
+  //   setCourse(newArr);
+  // }, [courses[0]]);
 
-  const [randomCourses, setCourse] = useState([]);
-  useEffect(() => {
-    let i = 0;
-    const newArr = []
-    while (i < 3) {
-      newArr[i] = courses[Math.floor(Math.random() * courses.length)];
-      i++;
-    }
-    setCourse(newArr)
-  }, [courses[0]]);
-
-  console.log(randomCourses)
-  
   return (
     <main className="course-detail" id="main">
       <section className="banner style2" style={{ "--background": "#cde6fb" }}>
         <div className="container">
           <div className="info">
-            <h1>{course.title}</h1>
-            <div className="row">
-              <div className="date">
-                <strong>Khai giảng:</strong> 12/10/2020
-              </div>
-              <div className="time">
-                <strong>Thời lượng:</strong> 18 buổi
-              </div>
-            </div>
-            <div
+            {isLoading ? (
+              <Skeleton animation="wave" width={700} height={105} />
+            ) : (
+              <>
+                <h1>{course.title}</h1>
+                <div className="row">
+                  <div className="date">
+                    <strong>Khai giảng:</strong> {course.opening_time}
+                  </div>
+                  <div className="time">
+                    <strong>Thời lượng:</strong> {course.count_video} buổi
+                  </div>
+                </div>
+              </>
+            )}
+
+            <Link
+              to={generatePath(REGISTER_PATH, { id })}
               className="btn white round"
               style={{ "--colorBtn": "#70b6f1" }}
             >
               đăng ký
-            </div>
+            </Link>
           </div>
         </div>
         <div className="bottom">
@@ -72,84 +83,28 @@ export default function CourseDetail() {
       </section>
       <section className="section-2">
         <div className="container">
-          <p className="des">{course.long_description}</p>
+          {isLoading ? (
+            <Skeleton animation="wave" variant="rectangular" height={400} />
+          ) : (
+            <p className="des">{course.long_description}</p>
+          )}
           <h2 className="title">giới thiệu về khóa học</h2>
           <div className="cover">
             <img src="/img/course-detail-img.png" alt="" />
           </div>
           <h3 className="title">nội dung khóa học</h3>
-          <div className="accordion">
-            <div className="accordion__title">
-              <div className="date">Ngày 1</div>
-              <h3>Giới thiệu HTML, SEO, BEM.</h3>
-            </div>
-            <div className="content">
-              I'd like to demonstrate a powerful little pattern called
-              “Server-Fetched Partials” that offers some tangible benefits over
-              alternatives like VueJS for simple page interactions.
-            </div>
-          </div>
-          <div className="accordion">
-            <div className="accordion__title">
-              <div className="date">Ngày 2</div>
-              <h3>CSS, CSS3, Flexbox, Grid</h3>
-            </div>
-            <div className="content">
-              I'd like to demonstrate a powerful little pattern called
-              “Server-Fetched Partials” that offers some tangible benefits over
-              alternatives like VueJS for simple page interactions.
-            </div>
-          </div>
-          <div className="accordion">
-            <div className="accordion__title">
-              <div className="date">Ngày 3</div>
-              <h3>Media Queries</h3>
-            </div>
-            <div className="content">
-              I'd like to demonstrate a powerful little pattern called
-              “Server-Fetched Partials” that offers some tangible benefits over
-              alternatives like VueJS for simple page interactions.
-            </div>
-          </div>
-          <div className="accordion">
-            <div className="accordion__title">
-              <div className="date">Ngày 4</div>
-              <h3>Boostrap 4</h3>
-            </div>
-            <div className="content">
-              I'd like to demonstrate a powerful little pattern called
-              “Server-Fetched Partials” that offers some tangible benefits over
-              alternatives like VueJS for simple page interactions.
-            </div>
-          </div>
-          <div className="accordion">
-            <div className="accordion__title">
-              <div className="date">Ngày 5</div>
-              <h3>Thực hành dự án website Landing Page</h3>
-            </div>
-            <div className="content">
-              I'd like to demonstrate a powerful little pattern called
-              “Server-Fetched Partials” that offers some tangible benefits over
-              alternatives like VueJS for simple page interactions.
-            </div>
-          </div>
-          <div className="accordion">
-            <div className="accordion__title">
-              <div className="date">Ngày 6</div>
-              <h3>Cài đặt Grunt và cấu trúc thư mục dự án</h3>
-            </div>
-            <div className="content">
-              I'd like to demonstrate a powerful little pattern called
-              “Server-Fetched Partials” that offers some tangible benefits over
-              alternatives like VueJS for simple page interactions.
-            </div>
-          </div>
+          <Accordion.Group>
+            {course?.content?.map((e, i) => (
+              <Accordion key={i} date={i + 1} title={e.title}>
+                {e.content}
+              </Accordion>
+            ))}
+          </Accordion.Group>
           <h3 className="title">yêu cầu cần có</h3>
           <div className="row row-check">
-            <div className="col-md-6">Đã từng học qua HTML, CSS</div>
-            <div className="col-md-6">
-              Cài đặt phần mềm Photoshop, Adobe illustrator, Skype
-            </div>
+            {course?.required?.map((required) => (
+              <div className="col-md-6">{required.content}</div>
+            ))}
           </div>
           <h3 className="title">hình thức học</h3>
           <div className="row row-check">
@@ -175,42 +130,39 @@ export default function CourseDetail() {
             </div>
           </h3>
           <p>
-            <strong>Ngày bắt đầu: </strong> 09/09/2020 <br />
-            <strong>Thời gian học: </strong> Thứ 3 từ 18h45-21h45, Thứ 7 từ
-            12h-15h, Chủ nhật từ 15h-18h
+            <strong>Ngày bắt đầu: </strong> {course.opening_time} <br />
+            <strong>Thời gian học: </strong> {course.schedule}
           </p>
           <h3 className="title">Người dạy</h3>
           <div className="teaches">
             <div className="teacher">
               <div className="avatar">
-                <img src="/img/avatar-lg.png" alt="" />
+                <img src={course.teacher?.avatar} alt="" />
               </div>
               <div className="info">
-                <div className="name">TRẦN NGHĨA</div>
-                <div className="title">
-                  Founder CFD &amp; Creative Front-End Developer
-                </div>
-                <p className="intro">
-                  My education, career, and even personal life have been molded
-                  by one simple principle; well designed information resonates
-                  with people and can change lives.I have a passion for making
-                  information resonate. It all starts with how people think.
-                  With how humans work. As humans we have learned how to read
-                  and write and while that is incredible, we are also already
-                  hard-wired to do some things a bit more "automatically"
-                </p>
-                <p>
-                  <strong>Website:</strong>{" "}
-                  <a href="#">http://nghiatran.info</a>
-                </p>
+                <div className="name">{course?.teacher?.title}</div>
+                <div className="title">{course.teacher?.position}</div>
+                <p className="intro">{course.teacher?.description}</p>
+                {course.teacher?.website !== null && (
+                  <p>
+                    <strong>Website:</strong>{" "}
+                    <a href="#">{course.teacher?.website}</a>
+                  </p>
+                )}
               </div>
             </div>
           </div>
           <div className="bottom">
             <div className="user">
-              <img src="/img/user-group-icon.png" alt="" /> 12 bạn đã đăng ký
+              <img src="/img/user-group-icon.png" alt="" /> {course.author} bạn
+              đã đăng ký
             </div>
-            <div className="btn main btn-register round">đăng ký</div>
+            <Link
+              to={generatePath(REGISTER_PATH, { id })}
+              className="btn main btn-register round"
+            >
+              đăng ký
+            </Link>
             <div className="btn-share btn overlay round btn-icon">
               <img src="/img/facebook.svg" alt="" />
             </div>
@@ -308,10 +260,10 @@ export default function CourseDetail() {
           <div className="list row">
             {courses
               .filter((e, i) => i < 3)
-              .map((ev,i) => (
+              .map((ev, i) => (
                 <CourseCard key={ev.id} {...ev} />
               ))}
-              {/* {
+            {/* {
                  randomCourses.map((e,i)=> (
                   <CourseCard key={i} {...e} />
                 ))

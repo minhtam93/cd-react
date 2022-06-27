@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import { Link } from 'react-router-dom';
-import { HOME_PATH } from "../constants/path";
+import { Link } from "react-router-dom";
+import { HOME_PATH, PROFILE_PATH } from "../constants/path";
+import { AuthProvider, useAuth } from "../hooks/useAuth";
 // import {HOME_PATH} from './constants/path'
 
-
 export default function Header() {
-  const toogleMenu = ()=> {
-    document.body.classList.toggle('menu-is-show')
-  }
+  const { user, onLogin, onLogout } = useAuth();
+
+  const toogleMenu = () => {
+    document.body.classList.toggle("menu-is-show");
+  };
+
   return (
     <header id="header">
       <div className="wrap">
@@ -25,22 +28,33 @@ export default function Header() {
           <h1>CFD</h1>
         </Link>
         <div className="right">
-          <div className="have-login">
-            <div className="account">
-              <a href="#" className="info">
-                <div className="name">Trần Lê Trọng Nghĩa</div>
-                <div className="avatar">
-                  <img src="/img/avt.png" alt="" />
-                </div>
+          {user ? (
+            <div className="have-login">
+              <div className="account">
+                <a href="#" className="info">
+                  <div className="name">{user.name}</div>
+                  <div className="avatar">
+                    <img src={user.avatar} alt="" />
+                  </div>
+                </a>
+              </div>
+              <div className="hamberger"></div>
+              <div className="sub">
+                <a href="#">Khóa học của tôi</a>
+                <Link to={PROFILE_PATH}>Thông tin tài khoản</Link>
+                <a href="#" onClick={onLogout}>Đăng xuất</a>
+              </div>
+            </div>
+          ) : (
+            <div className="not-login bg-none" onClick={onLogin}>
+              <a href="javascript:void()" className="btn-register">
+                Đăng nhập
+              </a>
+              <a href="login.html" className="btn main btn-open-login">
+                Đăng ký
               </a>
             </div>
-            <div className="hamberger"></div>
-            <div className="sub">
-              <a href="#">Khóa học của tôi</a>
-              <a href="#">Thông tin tài khoản</a>
-              <a href="#">Đăng xuất</a>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </header>

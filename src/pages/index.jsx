@@ -1,3 +1,4 @@
+import { Skeleton } from "@mui/material";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import CourseCard from "../components/CourseCard";
@@ -6,7 +7,7 @@ import { useCourse } from "../hooks/useCourse";
 import courseService from "../services/course";
 
 export default function Home() {
-  const courses = useCourse()
+  const { courses, isLoading } = useCourse();
   return (
     <main className="homepage" id="main">
       <div className="banner jarallax">
@@ -34,11 +35,18 @@ export default function Home() {
           <div className="textbox">
             <h2 className="main-title">Khóa học Offline</h2>
           </div>
-          <div className="list row">
-            {courses.map((course) => (
-              <CourseCard key={course.id} {...course}/>
-           ))}
-          </div>
+          {isLoading ? (
+            <Skeleton 
+              animation="wave" 
+              variant="rectangular" 
+              height={960} />
+          ) : (
+            <div className="list row">
+              {courses.map((course) => (
+                <CourseCard key={course.id} {...course} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
